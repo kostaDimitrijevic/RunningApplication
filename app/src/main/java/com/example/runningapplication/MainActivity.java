@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        this.getLifecycle().addObserver(new MyLifecycleAwareComponent());
+
         myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
         myViewModel.initByInstanceStateBundle(savedInstanceState);
 
