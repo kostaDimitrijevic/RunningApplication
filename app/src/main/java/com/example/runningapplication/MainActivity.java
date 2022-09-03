@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.runningapplication.calories.CaloriesActivity;
 import com.example.runningapplication.databinding.ActivityMainBinding;
+import com.example.runningapplication.routes.RouteBrowseActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +24,12 @@ public class MainActivity extends AppCompatActivity {
         binding.buttonCalories.setOnClickListener(view -> {
             Intent explicitIntent = new Intent();
             explicitIntent.setClass(this, CaloriesActivity.class);
+            startActivity(explicitIntent);
+        });
+
+        binding.buttonRoute.setOnClickListener(view -> {
+            Intent explicitIntent = new Intent();
+            explicitIntent.setClass(this, RouteBrowseActivity.class);
             startActivity(explicitIntent);
         });
     }
