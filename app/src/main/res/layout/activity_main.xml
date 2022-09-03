@@ -1,33 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linear_layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/purple_200"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <EditText
-        android:id="@+id/edit_text"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_calories"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:hint="Trajanje (min)"/>
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Izracunaj"/>
+        android:layout_margin="@dimen/main_button_margins"
+        android:text="@string/main_button_label_calories" />
 
-    <TextView
-        android:id="@+id/text_view"
-        android:layout_width="wrap_content"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_route"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="16dp"
-        android:text="Unesite trajanje"
-        android:textSize="20sp"/>
+        android:layout_margin="@dimen/main_button_margins"
+        android:text="@string/main_button_label_browse" />
 
 </LinearLayout>
