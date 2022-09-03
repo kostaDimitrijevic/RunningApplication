@@ -1,52 +1,36 @@
 package com.example.runningapplication;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.runningapplication.calories.CaloriesActivity;
 import com.example.runningapplication.databinding.ActivityMainBinding;
+import com.example.runningapplication.routes.RouteBrowseActivity;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
-    private MyViewModel myViewModel;
-
     @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        if(myViewModel.getCaloriesBurned().getValue() != null){
-            outState.putInt(MyViewModel.CALORIES_BURNED_KEY, myViewModel.getCaloriesBurned().getValue());
-        }
-
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        this.getLifecycle().addObserver(new MyLifecycleAwareComponent());
+        binding.buttonCalories.setOnClickListener(view -> {
+            Intent explicitIntent = new Intent();
+            explicitIntent.setClass(this, CaloriesActivity.class);
+            startActivity(explicitIntent);
+        });
 
-        myViewModel = new ViewModelProvider(this).get(MyViewModel.class);
-        myViewModel.initByInstanceStateBundle(savedInstanceState);
-
-        myViewModel.getCaloriesBurned().observe(this,
-                caloriesBurned -> binding.textView.setText(caloriesBurned + "kcal")
-        );
-
-        binding.button.setOnClickListener(view -> {
-            double duration = Double.parseDouble(binding.editText.getText().toString());
-            double met = 9.8;
-            double weight = 80;
-            int caloriesBurned = (int) (duration * met * 3.5 * weight / 200);
-            myViewModel.setCaloriesBurned(caloriesBurned);
+        binding.buttonRoute.setOnClickListener(view -> {
+            Intent explicitIntent = new Intent();
+            explicitIntent.setClass(this, RouteBrowseActivity.class);
+            startActivity(explicitIntent);
         });
     }
 }
