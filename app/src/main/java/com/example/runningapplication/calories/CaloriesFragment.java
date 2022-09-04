@@ -1,54 +1,56 @@
 package com.example.runningapplication.calories;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.content.res.TypedArray;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.example.runningapplication.MainActivity;
 import com.example.runningapplication.R;
-import com.example.runningapplication.databinding.ActivityCaloriesBinding;
 
-public class CaloriesActivity extends AppCompatActivity {
+import com.example.runningapplication.databinding.FragmentCaloriesBinding;
 
-    private ActivityCaloriesBinding binding;
+public class CaloriesFragment extends Fragment {
+
+    private FragmentCaloriesBinding binding;
 
     private CaloriesViewModel caloriesViewModel;
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        if(caloriesViewModel.getCaloriesBurned().getValue() != null){
-            outState.putInt(CaloriesViewModel.CALORIES_BURNED_KEY, caloriesViewModel.getCaloriesBurned().getValue());
-        }
-        if(caloriesViewModel.getCaloriesNeeded().getValue() != null){
-            outState.putInt(CaloriesViewModel.CALORIES_NEEDED_KEY, caloriesViewModel.getCaloriesNeeded().getValue());
-        }
-
+    public CaloriesFragment() {
+        // Required empty public constructor
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = ActivityCaloriesBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
 
-        caloriesViewModel = new ViewModelProvider(this).get(CaloriesViewModel.class);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        binding = FragmentCaloriesBinding.inflate(inflater, container, false);
+
+        MainActivity parentActivity = (MainActivity) getActivity();
+
+        caloriesViewModel = new ViewModelProvider(parentActivity).get(CaloriesViewModel.class);
         caloriesViewModel.initByInstanceStateBundle(savedInstanceState);
 
-        caloriesViewModel.getCaloriesBurned().observe(this, caloriesBurned -> {
-                if(caloriesBurned != -1){
-                    String prefix = getResources().getString(R.string.calories_burned);
-                    binding.burned.setText(prefix + ": " + caloriesBurned + " kcal");
+
+
+        caloriesViewModel.getCaloriesBurned().observe(parentActivity, caloriesBurned -> {
+                    if(caloriesBurned != -1){
+                        String prefix = getResources().getString(R.string.calories_burned);
+                        binding.burned.setText(prefix + ": " + caloriesBurned + " kcal");
+                    }
                 }
-           }
         );
 
-        caloriesViewModel.getCaloriesNeeded().observe(this, caloriesNeeded -> {
+        caloriesViewModel.getCaloriesNeeded().observe(parentActivity, caloriesNeeded -> {
             if(caloriesNeeded != -1){
                 String prefix = getResources().getString(R.string.calories_needed);
                 binding.need.setText(prefix + ": " + caloriesNeeded + " kcal");
@@ -57,7 +59,7 @@ public class CaloriesActivity extends AppCompatActivity {
 
         //spinner
         String[] metStrings = getResources().getStringArray(R.array.met_strings);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, metStrings);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(parentActivity, android.R.layout.simple_list_item_1, metStrings);
         binding.spinner.setAdapter(arrayAdapter);
 
         binding.calculate.setOnClickListener(v -> {
@@ -65,7 +67,7 @@ public class CaloriesActivity extends AppCompatActivity {
             try{
                 weight = Double.parseDouble(binding.weight.getEditText().getText().toString());
             } catch (NumberFormatException ex){
-                Toast.makeText(this, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(parentActivity, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
                 binding.weight.getEditText().requestFocus();
                 return;
             }
@@ -75,7 +77,7 @@ public class CaloriesActivity extends AppCompatActivity {
                 height = Double.parseDouble(
                         binding.height.getEditText().getText().toString());
             } catch (NumberFormatException nfe) {
-                Toast.makeText(this, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(parentActivity, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
                 binding.height.getEditText().requestFocus();
                 return;
             }
@@ -85,18 +87,18 @@ public class CaloriesActivity extends AppCompatActivity {
                 age = Integer.parseInt(
                         binding.age.getEditText().getText().toString());
             } catch (NumberFormatException nfe) {
-                Toast.makeText(this, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(parentActivity, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
                 binding.age.getEditText().requestFocus();
                 return;
             }
 
             if (binding.female.isChecked() == false && binding.male.isChecked() == false) {
-                Toast.makeText(this, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(parentActivity, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
                 return;
             }
 
             if (binding.radioGroup.getCheckedRadioButtonId() == -1) {
-                Toast.makeText(this, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(parentActivity, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -107,7 +109,7 @@ public class CaloriesActivity extends AppCompatActivity {
                 duration = Double.parseDouble(
                         binding.duration.getEditText().getText().toString());
             } catch (NumberFormatException nfe) {
-                Toast.makeText(this, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(parentActivity, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
                 binding.duration.getEditText().requestFocus();
                 return;
             }
@@ -117,5 +119,18 @@ public class CaloriesActivity extends AppCompatActivity {
 
             caloriesViewModel.updateValues(weight, height, age, isMale, duration, met);
         });
+
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(caloriesViewModel.getCaloriesBurned().getValue() != null){
+            outState.putInt(CaloriesViewModel.CALORIES_BURNED_KEY, caloriesViewModel.getCaloriesBurned().getValue());
+        }
+        if(caloriesViewModel.getCaloriesNeeded().getValue() != null){
+            outState.putInt(CaloriesViewModel.CALORIES_NEEDED_KEY, caloriesViewModel.getCaloriesNeeded().getValue());
+        }
     }
 }

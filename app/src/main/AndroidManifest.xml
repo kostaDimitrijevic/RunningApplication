@@ -14,12 +14,6 @@
         android:theme="@style/Theme.RunningApplication"
         tools:targetApi="31">
         <activity
-            android:name=".routes.RouteDetailsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".routes.RouteBrowseActivity"
-            android:exported="false" />
-        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -28,7 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".calories.CaloriesActivity" />
     </application>
 
 </manifest>
