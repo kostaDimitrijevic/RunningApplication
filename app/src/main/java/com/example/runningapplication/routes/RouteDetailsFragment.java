@@ -47,6 +47,9 @@ public class RouteDetailsFragment extends Fragment {
 //        routeViewModel.getSelectedRoute().observe(getViewLifecycleOwner(), selectedRoute -> {
 //            if(selectedRoute != null){
                 binding.toolbar.setTitle(selectedRoute.getLabel());
+                binding.toolbar.setNavigationOnClickListener(view -> {
+                    navController.navigateUp();
+                });
 
                 binding.routeImage.setImageDrawable(selectedRoute.getImage());
                 binding.routeLabel.setText(selectedRoute.getLabel());
