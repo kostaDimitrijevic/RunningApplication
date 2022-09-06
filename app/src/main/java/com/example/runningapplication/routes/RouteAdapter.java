@@ -16,12 +16,18 @@ import java.util.List;
 
 public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHolder> {
 
+    public interface Callback<T>{
+        void Invoke(T parameter);
+    }
+
     private final MainActivity mainActivity;
     private final RouteViewModel routeViewModel;
+    private final Callback<Integer> callback;
 
-    public RouteAdapter(MainActivity mainActivity){
+    public RouteAdapter(MainActivity mainActivity, Callback<Integer> callback){
         this.mainActivity = mainActivity;
         this.routeViewModel = new ViewModelProvider(mainActivity).get(RouteViewModel.class);
+        this.callback = callback;
     }
 
     @NonNull
@@ -68,6 +74,8 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
 //                intent.putExtra(RouteDetailsActivity.SELECTED_ROUTE_INDEX, routeIndex);
 //
 //                mainActivity.startActivity(intent);
+
+                callback.Invoke(routeIndex);
             });
 
             binding.routeButtonLocation.setOnClickListener(view -> {

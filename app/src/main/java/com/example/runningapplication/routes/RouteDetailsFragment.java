@@ -36,17 +36,19 @@ public class RouteDetailsFragment extends Fragment {
 
         routeViewModel = new ViewModelProvider(parentActivity).get(RouteViewModel.class);
 
+        Route selectedRoute = routeViewModel.getRoutes().get(RouteDetailsFragmentArgs.fromBundle(requireArguments()).getRouteIndex());
+
         // prosledjujemo lifecycleowner(this fragment) za koji zelimo da posmatra selekciju rute
-        routeViewModel.getSelectedRoute().observe(getViewLifecycleOwner(), selectedRoute -> {
-            if(selectedRoute != null){
+//        routeViewModel.getSelectedRoute().observe(getViewLifecycleOwner(), selectedRoute -> {
+//            if(selectedRoute != null){
                 binding.routeImage.setImageDrawable(selectedRoute.getImage());
                 binding.routeLabel.setText(selectedRoute.getLabel());
                 binding.routeName.setText(selectedRoute.getName());
                 binding.routeLength.setText(selectedRoute.getLength() + "km");
                 binding.routeDifficulty.setText(selectedRoute.getDifficulty());
                 binding.routeDescription.setText(selectedRoute.getDescription());
-            }
-        });
+//            }
+//        });
 
         return binding.getRoot();
     }

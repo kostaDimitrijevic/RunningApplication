@@ -38,7 +38,7 @@ public class CaloriesFragment extends Fragment {
         MainActivity parentActivity = (MainActivity) getActivity();
 
         caloriesViewModel = new ViewModelProvider(parentActivity).get(CaloriesViewModel.class);
-        caloriesViewModel.initByInstanceStateBundle(savedInstanceState);
+        //caloriesViewModel.initByInstanceStateBundle(savedInstanceState);
 
 
 
@@ -123,14 +123,14 @@ public class CaloriesFragment extends Fragment {
         return binding.getRoot();
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if(caloriesViewModel.getCaloriesBurned().getValue() != null){
-            outState.putInt(CaloriesViewModel.CALORIES_BURNED_KEY, caloriesViewModel.getCaloriesBurned().getValue());
-        }
-        if(caloriesViewModel.getCaloriesNeeded().getValue() != null){
-            outState.putInt(CaloriesViewModel.CALORIES_NEEDED_KEY, caloriesViewModel.getCaloriesNeeded().getValue());
-        }
-    }
+//    @Override
+//    public void onSaveInstanceState(@NonNull Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        if(caloriesViewModel.getCaloriesBurned().getValue() != null){
+//            outState.putInt(CaloriesViewModel.CALORIES_BURNED_KEY, caloriesViewModel.getCaloriesBurned().getValue());
+//        }
+//        if(caloriesViewModel.getCaloriesNeeded().getValue() != null){
+//            outState.putInt(CaloriesViewModel.CALORIES_NEEDED_KEY, caloriesViewModel.getCaloriesNeeded().getValue());
+//        }
+//    }
 }

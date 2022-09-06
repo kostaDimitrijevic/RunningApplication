@@ -7,11 +7,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
+import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.runningapplication.calories.CaloriesFragment;
+import com.example.runningapplication.calories.CaloriesFragmentDirections;
 import com.example.runningapplication.databinding.ActivityMainBinding;
-import com.example.runningapplication.routes.RouteBrowseFragment;
-import com.example.runningapplication.routes.RouteFragment;
 import com.example.runningapplication.routes.RouteViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -19,13 +20,8 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private FragmentManager fragmentManager;
 
-    private static final String CALORIES_TAG = "fragment-calories-tag";
-    private CaloriesFragment caloriesFragment;
-
-    private static final String ROUTE_TAG = "fragment-route-tag";
-    private RouteFragment routeFragment;
-
     private RouteViewModel routeViewModel;
+    private NavController navController;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,37 +34,33 @@ public class MainActivity extends AppCompatActivity {
 
         fragmentManager = getSupportFragmentManager();
 
-        if(fragmentManager.getFragments().size() == 0){
-            caloriesFragment = new CaloriesFragment();
-            routeFragment = new RouteFragment();
-            //container je ono gde cemo da smestimo taj fragment
-            fragmentManager.beginTransaction()
-                    .add(R.id.frame_layout, routeFragment, ROUTE_TAG)
-                    .add(R.id.frame_layout, caloriesFragment, CALORIES_TAG)
-                    .hide(caloriesFragment)
-                    .show(routeFragment)
-                    .commit();
-        } else{
-            caloriesFragment = (CaloriesFragment) fragmentManager.findFragmentByTag(CALORIES_TAG);
-            routeFragment = (RouteFragment) fragmentManager.findFragmentByTag(ROUTE_TAG);
-        }
+        NavHostFragment navHost = (NavHostFragment) fragmentManager.findFragmentById(R.id.nav_host_fragment);
 
+        navController = navHost.getNavController();
 
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             switch (item.getItemId()){
                 case R.id.menu_item_routes:
-                    fragmentManager.beginTransaction()
-//                            .replace(R.id.frame_layout, routeBrowseFragment, ROUTE_BROWSE_TAG)
-                            .show(routeFragment)
-                            .hide(caloriesFragment)
-                            .commit();
+                    switch (navController.getCurrentDestination().getId()){
+                        case R.id.calories:
+                            NavDirections action = CaloriesFragmentDirections.actionCaloriesPop();
+                            navController.navigate(action);
+                            break;
+                        default:
+                            break;
+                    }
+
                     return true;
                 case R.id.menu_item_calories:
-                    fragmentManager.beginTransaction()
-//                                   .replace(R.id.frame_layout, new CaloriesFragment(), CALORIES_TAG)
-                            .show(caloriesFragment)
-                            .hide(routeFragment)
-                            .commit();
+                    switch (navController.getCurrentDestination().getId()){
+                        case R.id.route_browse:
+                        case R.id.route_details:
+                            NavDirections action = NavGraphDirections.actionGlobalCalories();
+                            navController.navigate(action);
+                            break;
+                        default:
+                            break;
+                    }
 
                     return true;
             }
@@ -78,13 +70,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
-        if(binding.bottomNavigation.getSelectedItemId() == R.id.menu_item_routes){
-            if(routeFragment.getChildFragmentManager().getBackStackEntryCount() > 0){
+        switch (navController.getCurrentDestination().getId()){
+            case R.id.route_details:
                 routeViewModel.setSelectedRoute(null);
-                routeFragment.getChildFragmentManager().popBackStack();
-                return;
-            }
+                break;
+            case R.id.calories:
+                // pozvace se i item selected listener nakon instrukcije!
+                // binding.bottomNavigation.setSelectedItemId(R.id.menu_item_routes);
+                binding.bottomNavigation.getMenu().getItem(0).setChecked(true);
+                break;
         }
         super.onBackPressed();
     }
