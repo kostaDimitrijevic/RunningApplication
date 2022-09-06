@@ -1,5 +1,7 @@
 package com.example.runningapplication.routes;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -49,7 +51,7 @@ public class RouteBrowseFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         binding = FragmentRouteBrowseBinding.inflate(inflater, container, false);
@@ -62,11 +64,25 @@ public class RouteBrowseFragment extends Fragment {
 //            }
 //        });
 
-        RouteAdapter routeAdapter = new RouteAdapter(parentActivity, routeIndex -> {
-            RouteBrowseFragmentDirections.ActionShowRouteDetails action = RouteBrowseFragmentDirections.actionShowRouteDetails();
-            action.setRouteIndex(routeIndex);
-            navController.navigate(action);
-        });
+        RouteAdapter routeAdapter = new RouteAdapter(routeViewModel,
+                routeIndex -> {
+                    RouteBrowseFragmentDirections.ActionShowRouteDetails action = RouteBrowseFragmentDirections.actionShowRouteDetails();
+                    action.setRouteIndex(routeIndex);
+                    navController.navigate((NavDirections) action);
+                },
+                routeIndex ->{
+                    String locationString = routeViewModel.getRoutes().get(routeIndex).getLocation();
+                    locationString = locationString.replace(" ", "20%");
+                    locationString = locationString.replace(",", "%2C");
+                    Uri locationUri = Uri.parse("geo:0,0?q=" + locationString);
+
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.setData(locationUri);
+
+                    parentActivity.startActivity(intent);
+                }
+        );
 
         binding.recyclerView.setHasFixedSize(true);
         binding.recyclerView.setAdapter(routeAdapter);
