@@ -29,9 +29,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:hint="@string/workout_create_date"
+            app:endIconDrawable="@drawable/outline_calendar_month_24"
             app:endIconMode="custom"
             app:endIconTint="?attr/colorPrimary">
-<!--            app:endIconDrawable="@drawable/baseline_calendar_today_24"-->
+
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/workout_date_edit_text"
