@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -17,6 +18,7 @@ import com.example.runningapplication.MainActivity;
 import com.example.runningapplication.R;
 import com.example.runningapplication.data.RunDatabase;
 import com.example.runningapplication.data.Workout;
+import com.example.runningapplication.data.WorkoutRepository;
 import com.example.runningapplication.databinding.FragmentWorkoutCreateBinding;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -42,8 +44,18 @@ public class WorkoutCreateFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        RunDatabase runDatabase = RunDatabase.getInstance(mainActivity);
+        WorkoutRepository workoutRepository = new WorkoutRepository(runDatabase.workoutDao());
+
         mainActivity = (MainActivity) requireActivity();
-        workoutViewModel = new ViewModelProvider(mainActivity).get(WorkoutViewModel.class);
+        ViewModelProvider.Factory factory = new ViewModelProvider.Factory() {
+            @NonNull
+            @Override
+            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+                return (T) new WorkoutViewModel(workoutRepository);
+            }
+        };
+        workoutViewModel = new ViewModelProvider(mainActivity, factory).get(WorkoutViewModel.class);
     }
 
     @Override
@@ -80,8 +92,7 @@ public class WorkoutCreateFragment extends Fragment {
             Number duration = (Number) parse(binding.workoutDuration, NumberFormat.getInstance());
 
             if(!(date == null || label == null || distance == null || duration == null)){
-                RunDatabase runDatabase = RunDatabase.getInstance(mainActivity);
-                runDatabase.workoutDao().insert( new Workout(
+                workoutViewModel.insertWorkout(new Workout(
                         0,
                         date,
                         label,
