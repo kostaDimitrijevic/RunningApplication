@@ -54,4 +54,6 @@ dependencies {
     implementation 'androidx.room:room-runtime:2.3.0'
     annotationProcessor 'androidx.room:room-compiler:2.3.0'
 
+    implementation 'androidx.fragment:fragment:1.4.1'
+
 }
