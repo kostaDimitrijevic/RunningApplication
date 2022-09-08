@@ -6,12 +6,24 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.runningapplication.data.Workout;
 import com.example.runningapplication.databinding.ViewHolderWorkoutBinding;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutViewHolder> {
 
+    private List<Workout> workoutList = new ArrayList<>();
+
     public WorkoutAdapter() {
 
+    }
+
+    public void setWorkoutList(List<Workout> workoutList) {
+        this.workoutList = workoutList;
+        // obavestavamo da se nesto promenilo nakon iscrtavanja
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -28,12 +40,12 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
 
     @Override
     public void onBindViewHolder(@NonNull WorkoutAdapter.WorkoutViewHolder holder, int position) {
-        ViewHolderWorkoutBinding binding = holder.binding;
+        holder.bind(workoutList.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return workoutList.size();
     }
 
     public class WorkoutViewHolder extends RecyclerView.ViewHolder {
@@ -43,6 +55,14 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
         public WorkoutViewHolder(@NonNull ViewHolderWorkoutBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+        }
+
+        public void bind(Workout workout){
+            binding.workoutDate.setText(DateTimeUtil.getSimpleDateFormat().format(workout.getDate()));
+            binding.workoutLabel.setText(workout.getLabel());
+            binding.workoutDistance.setText(String.format("%.2f km", workout.getDistance()));
+            binding.workoutPace.setText(String.format("%s min/km", DateTimeUtil.realMinutesToString(workout.getDuration() / workout.getDistance())));
+            binding.workoutDuration.setText(String.format("%.2f min", workout.getDistance()));
         }
     }
 }
