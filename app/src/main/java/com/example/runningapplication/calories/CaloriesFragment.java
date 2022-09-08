@@ -4,8 +4,11 @@ import android.content.res.TypedArray;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,32 +20,46 @@ import com.example.runningapplication.MainActivity;
 import com.example.runningapplication.R;
 
 import com.example.runningapplication.databinding.FragmentCaloriesBinding;
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 public class CaloriesFragment extends Fragment {
 
     private FragmentCaloriesBinding binding;
-
     private CaloriesViewModel caloriesViewModel;
+    private NavController navController;
+    private MainActivity mainActivity;
 
     public CaloriesFragment() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mainActivity = (MainActivity) requireActivity();
+        caloriesViewModel = new ViewModelProvider(this).get(CaloriesViewModel.class);
+
+    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         binding = FragmentCaloriesBinding.inflate(inflater, container, false);
 
-        MainActivity parentActivity = (MainActivity) getActivity();
+        //caloriesViewModel.initByInstanceStateBundle(savedInstanceState);
 
-        caloriesViewModel = new ViewModelProvider(parentActivity).get(CaloriesViewModel.class);
-        caloriesViewModel.initByInstanceStateBundle(savedInstanceState);
-
-
-
-        caloriesViewModel.getCaloriesBurned().observe(parentActivity, caloriesBurned -> {
+        caloriesViewModel.getCaloriesBurned().observe(mainActivity, caloriesBurned -> {
                     if(caloriesBurned != -1){
                         String prefix = getResources().getString(R.string.calories_burned);
                         binding.burned.setText(prefix + ": " + caloriesBurned + " kcal");
@@ -50,7 +67,7 @@ public class CaloriesFragment extends Fragment {
                 }
         );
 
-        caloriesViewModel.getCaloriesNeeded().observe(parentActivity, caloriesNeeded -> {
+        caloriesViewModel.getCaloriesNeeded().observe(mainActivity, caloriesNeeded -> {
             if(caloriesNeeded != -1){
                 String prefix = getResources().getString(R.string.calories_needed);
                 binding.need.setText(prefix + ": " + caloriesNeeded + " kcal");
@@ -59,78 +76,65 @@ public class CaloriesFragment extends Fragment {
 
         //spinner
         String[] metStrings = getResources().getStringArray(R.array.met_strings);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(parentActivity, android.R.layout.simple_list_item_1, metStrings);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(mainActivity, android.R.layout.simple_list_item_1, metStrings);
         binding.spinner.setAdapter(arrayAdapter);
 
         binding.calculate.setOnClickListener(v -> {
-            double weight = 0;
-            try{
-                weight = Double.parseDouble(binding.weight.getEditText().getText().toString());
-            } catch (NumberFormatException ex){
-                Toast.makeText(parentActivity, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
-                binding.weight.getEditText().requestFocus();
-                return;
-            }
 
-            double height = 0;
             try {
-                height = Double.parseDouble(
-                        binding.height.getEditText().getText().toString());
-            } catch (NumberFormatException nfe) {
-                Toast.makeText(parentActivity, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
-                binding.height.getEditText().requestFocus();
+                double weight = fetchNumber(binding.weight).doubleValue();
+                double height = fetchNumber(binding.height).doubleValue();
+                int age = fetchNumber(binding.age).intValue();
+
+                if (binding.radioGroup.getCheckedRadioButtonId() == -1) {
+                    Toast.makeText(mainActivity, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (!binding.female.isChecked() && !binding.male.isChecked()) {
+                    Toast.makeText(mainActivity, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                boolean isMale = binding.male.isChecked();
+
+                double duration = fetchNumber(binding.duration).doubleValue();
+
+                TypedArray metValues = getResources().obtainTypedArray(R.array.met_values);
+                double met = metValues.getFloat(binding.spinner.getSelectedItemPosition(), 0);
+                metValues.recycle();
+
+                caloriesViewModel.updateValues(weight, height, age, isMale, duration, met);
+            } catch (NumberFormatException | ParseException ignored) {
+                //ignore
                 return;
             }
-
-            int age = 0;
-            try {
-                age = Integer.parseInt(
-                        binding.age.getEditText().getText().toString());
-            } catch (NumberFormatException nfe) {
-                Toast.makeText(parentActivity, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
-                binding.age.getEditText().requestFocus();
-                return;
-            }
-
-            if (binding.female.isChecked() == false && binding.male.isChecked() == false) {
-                Toast.makeText(parentActivity, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (binding.radioGroup.getCheckedRadioButtonId() == -1) {
-                Toast.makeText(parentActivity, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            boolean isMale = binding.male.isChecked();
-
-            double duration = 0;
-            try {
-                duration = Double.parseDouble(
-                        binding.duration.getEditText().getText().toString());
-            } catch (NumberFormatException nfe) {
-                Toast.makeText(parentActivity, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
-                binding.duration.getEditText().requestFocus();
-                return;
-            }
-
-            TypedArray metValues = getResources().obtainTypedArray(R.array.met_values);
-            double met = metValues.getFloat(binding.spinner.getSelectedItemPosition(), 0);
-
-            caloriesViewModel.updateValues(weight, height, age, isMale, duration, met);
         });
 
         return binding.getRoot();
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if(caloriesViewModel.getCaloriesBurned().getValue() != null){
-            outState.putInt(CaloriesViewModel.CALORIES_BURNED_KEY, caloriesViewModel.getCaloriesBurned().getValue());
+    private Number fetchNumber(TextInputLayout textInputLayout) throws ParseException {
+        Number result = 0;
+        try{
+            result = NumberFormat.getInstance().parse(textInputLayout.getEditText().getText().toString());
+        } catch (NumberFormatException | ParseException ex){
+            Toast.makeText(mainActivity, R.string.calories_error_message, Toast.LENGTH_SHORT).show();
+            textInputLayout.getEditText().requestFocus();
+            throw ex;
         }
-        if(caloriesViewModel.getCaloriesNeeded().getValue() != null){
-            outState.putInt(CaloriesViewModel.CALORIES_NEEDED_KEY, caloriesViewModel.getCaloriesNeeded().getValue());
-        }
+
+        return result;
     }
+
+//    @Override
+//    public void onSaveInstanceState(@NonNull Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        if(caloriesViewModel.getCaloriesBurned().getValue() != null){
+//            outState.putInt(CaloriesViewModel.CALORIES_BURNED_KEY, caloriesViewModel.getCaloriesBurned().getValue());
+//        }
+//        if(caloriesViewModel.getCaloriesNeeded().getValue() != null){
+//            outState.putInt(CaloriesViewModel.CALORIES_NEEDED_KEY, caloriesViewModel.getCaloriesNeeded().getValue());
+//        }
+//    }
 }

@@ -6,22 +6,24 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.runningapplication.MainActivity;
 import com.example.runningapplication.databinding.ViewHolderRouteBinding;
-
-import java.util.List;
 
 public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHolder> {
 
-    private final MainActivity mainActivity;
-    private final RouteViewModel routeViewModel;
+    public interface Callback<T>{
+        void Invoke(T parameter);
+    }
 
-    public RouteAdapter(MainActivity mainActivity){
-        this.mainActivity = mainActivity;
-        this.routeViewModel = new ViewModelProvider(mainActivity).get(RouteViewModel.class);
+    private final RouteViewModel routeViewModel;
+    private final Callback<Integer> callbackDescription;
+    private final Callback<Integer> callbackLocation;
+
+    public RouteAdapter(RouteViewModel routeViewModel, Callback<Integer> callback, Callback<Integer> callbackLocation){
+        this.routeViewModel = routeViewModel;
+        this.callbackDescription = callback;
+        this.callbackLocation = callbackLocation;
     }
 
     @NonNull
@@ -68,20 +70,13 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
 //                intent.putExtra(RouteDetailsActivity.SELECTED_ROUTE_INDEX, routeIndex);
 //
 //                mainActivity.startActivity(intent);
+
+                callbackDescription.Invoke(routeIndex);
             });
 
             binding.routeButtonLocation.setOnClickListener(view -> {
                 int routeIndex = getAdapterPosition();
-                String locationString = routeViewModel.getRoutes().get(routeIndex).getLocation();
-                locationString = locationString.replace(" ", "20%");
-                locationString = locationString.replace(",", "%2C");
-                Uri locationUri = Uri.parse("geo:0,0?q=" + locationString);
-
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-                intent.setData(locationUri);
-
-                mainActivity.startActivity(intent);
+                callbackLocation.Invoke(routeIndex);
             });
         }
     }

@@ -22,9 +22,28 @@
     <string name="main_button_label_browse">Browse routes</string>
 
     <!-- Route -->
+    <string name="route_toolbar_label">Walking routes</string>
     <string name="route_button_label_description">Description</string>
     <string name="route_button_label_location">Location</string>
     <string name="main_navigation_label_routes">Routes</string>
     <string name="main_navigation_label_calories">Calories</string>
+    <string name="calories_toolbar_label">Calories calculator</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="workout_toolbar_label">Workouts</string>
+    <string name="main_navigation_label_workouts">Workouts</string>
+
+    <string name="workout_toolbar_create_label">New Workout</string>
+    <string name="workout_create_date">Date</string>
+    <string name="workout_create_label">Label</string>
+    <string name="workout_create_distance">Distance</string>
+    <string name="workout_create_duration">Duration</string>
+    <string name="workout_create_distance_unit">km</string>
+    <string name="workout_create_duration_unit">min</string>
+    <string name="workout_create_button_label">Create</string>
+    <string name="workout_create_error_empty">Field is required</string>
+    <string name="workout_create_error_format">Wrong format</string>
+    <string name="workout_options_menu_sort_label">Sort</string>
+
 
 </resources>
