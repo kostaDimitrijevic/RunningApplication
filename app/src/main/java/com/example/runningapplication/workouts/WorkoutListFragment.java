@@ -21,7 +21,9 @@ import com.example.runningapplication.data.RunDatabase;
 import com.example.runningapplication.data.WorkoutRepository;
 import com.example.runningapplication.databinding.FragmentWorkoutListBinding;
 
+import dagger.hilt.android.AndroidEntryPoint;
 
+@AndroidEntryPoint
 public class WorkoutListFragment extends Fragment {
 
     private FragmentWorkoutListBinding binding;
@@ -38,17 +40,7 @@ public class WorkoutListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mainActivity = (MainActivity) requireActivity();
 
-        RunDatabase runDatabase = RunDatabase.getInstance(mainActivity);
-        WorkoutRepository workoutRepository = new WorkoutRepository(runDatabase.workoutDao());
-
-        ViewModelProvider.Factory factory = new ViewModelProvider.Factory() {
-            @NonNull
-            @Override
-            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new WorkoutViewModel(workoutRepository);
-            }
-        };
-        workoutViewModel = new ViewModelProvider(mainActivity, factory).get(WorkoutViewModel.class);
+        workoutViewModel = new ViewModelProvider(mainActivity).get(WorkoutViewModel.class);
     }
 
     @Override

@@ -8,10 +8,16 @@ import com.example.runningapplication.data.WorkoutRepository;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
+@HiltViewModel
 public class WorkoutViewModel extends ViewModel {
 
     private final WorkoutRepository workoutRepository;
 
+    @Inject
     public WorkoutViewModel(WorkoutRepository workoutRepository) {
         this.workoutRepository = workoutRepository;
     }
