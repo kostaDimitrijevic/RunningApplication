@@ -10,6 +10,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +23,7 @@ import com.example.runningapplication.MainActivity;
 import com.example.runningapplication.R;
 
 import com.example.runningapplication.databinding.FragmentCaloriesBinding;
+import com.example.runningapplication.threading.CustomLooperThread;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.NumberFormat;
@@ -31,6 +35,7 @@ public class CaloriesFragment extends Fragment {
     private CaloriesViewModel caloriesViewModel;
     private NavController navController;
     private MainActivity mainActivity;
+    private HandlerThread handlerThread;
 
     public CaloriesFragment() {
         // Required empty public constructor
@@ -42,6 +47,9 @@ public class CaloriesFragment extends Fragment {
 
         mainActivity = (MainActivity) requireActivity();
         caloriesViewModel = new ViewModelProvider(this).get(CaloriesViewModel.class);
+
+        handlerThread = new HandlerThread("handler-thread-name");
+        handlerThread.start();
 
     }
 
@@ -107,8 +115,16 @@ public class CaloriesFragment extends Fragment {
                 caloriesViewModel.updateValues(weight, height, age, isMale, duration, met);
             } catch (NumberFormatException | ParseException ignored) {
                 //ignore
-                return;
             }
+
+            // dobijamo handler koji odgovara nasem lloooperu
+            Handler newThreadHandler = new Handler(handlerThread.getLooper());
+
+            newThreadHandler.post(() -> {
+                // nesto
+                SystemClock.sleep(1000);
+                binding.calculate.post(() -> binding.calculate.setText("okay"));
+            });
         });
 
         return binding.getRoot();
