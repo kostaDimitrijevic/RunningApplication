@@ -76,6 +76,7 @@ public class WorkoutListFragment extends Fragment {
                     navController.navigate(WorkoutListFragmentDirections.createWorkout());
                     return false;
                 case R.id.workout_fab_start:
+                    navController.navigate(WorkoutListFragmentDirections.startWorkout());
                     return false;
             }
 

@@ -9,12 +9,18 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.runningapplication.MainActivity;
 import com.example.runningapplication.databinding.FragmentWorkoutStartBinding;
+
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -25,6 +31,7 @@ public class WorkoutStartFragment extends Fragment {
     private WorkoutViewModel workoutViewModel;
     private NavController navController;
     private MainActivity mainActivity;
+    private Timer timer;
 
     public WorkoutStartFragment() {
         // Required empty public constructor
@@ -46,6 +53,12 @@ public class WorkoutStartFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentWorkoutStartBinding.inflate(inflater, container, false);
 
+        timer = new Timer();
+
+        binding.start.setOnClickListener(view -> {
+            startWorkout(new Date().getTime());
+        });
+
         return binding.getRoot();
     }
 
@@ -55,4 +68,42 @@ public class WorkoutStartFragment extends Fragment {
         navController = Navigation.findNavController(view);
     }
 
+    private void startWorkout(long startTimestamp){
+        binding.start.setEnabled(false);
+        binding.finish.setEnabled(true);
+        binding.cancel.setEnabled(true);
+        binding.power.setEnabled(true);
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        // 10 milisekundi
+        timer.schedule(new TimerTask() {
+            // SAM RUN TIMERA JE DRUGA NIT I NE MOZEMO DA DIRAMO STVARI IZ VIEW TO MORA UI NIT
+            @Override
+            public void run() {
+                long elapsed = new Date().getTime() - startTimestamp;
+
+                int milliseconds = (int) ((elapsed % 1000) / 10);
+                int seconds = (int) ((elapsed / 1000) % 60);
+                int minutes = (int) ((elapsed / (1000 * 60)) % 60);
+                int hours = (int) ((elapsed / (1000 * 60 * 60)) % 24);
+
+                StringBuilder workoutDuration = new StringBuilder();
+                workoutDuration.append(String.format("%02d", hours)).append(":");
+                workoutDuration.append(String.format("%02d", minutes)).append(":");
+                workoutDuration.append(String.format("%02d", seconds)).append(".");
+                workoutDuration.append(String.format("%02d", milliseconds));
+
+                handler.post(() -> {
+                    binding.workoutDuration.setText(workoutDuration);
+                });
+            }
+        }, 0 , 10);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        timer.cancel();
+    }
 }
