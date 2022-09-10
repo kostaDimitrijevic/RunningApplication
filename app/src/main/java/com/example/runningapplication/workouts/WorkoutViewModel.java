@@ -1,6 +1,8 @@
 package com.example.runningapplication.workouts;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.example.runningapplication.data.Workout;
@@ -17,6 +19,8 @@ public class WorkoutViewModel extends ViewModel {
 
     private final WorkoutRepository workoutRepository;
 
+    private final MutableLiveData<Boolean> sorted = new MutableLiveData<>(false);
+
     @Inject
     public WorkoutViewModel(WorkoutRepository workoutRepository) {
         this.workoutRepository = workoutRepository;
@@ -27,6 +31,18 @@ public class WorkoutViewModel extends ViewModel {
     }
 
     public LiveData<List<Workout>> getWorkoutList(){
-        return workoutRepository.getAllLiveData();
+
+        return Transformations.switchMap(sorted, sorted -> {
+            if(!sorted){
+                return workoutRepository.getAllLiveData();
+            }
+            else{
+                return workoutRepository.getAllSortedLiveData();
+            }
+        });
+    }
+
+    public void invertSorted(){
+        sorted.setValue(!sorted.getValue());
     }
 }

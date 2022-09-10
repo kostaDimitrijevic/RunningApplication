@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.runningapplication.MainActivity;
+import com.example.runningapplication.R;
 import com.example.runningapplication.data.RunDatabase;
 import com.example.runningapplication.data.WorkoutRepository;
 import com.example.runningapplication.databinding.FragmentWorkoutListBinding;
@@ -48,6 +49,17 @@ public class WorkoutListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentWorkoutListBinding.inflate(inflater, container, false);
+
+        binding.toolbar.inflateMenu(R.menu.workout_list_options_menu);
+        binding.toolbar.setOnMenuItemClickListener(menuItem -> {
+            switch (menuItem.getItemId()){
+                case R.id.workout_menu_item_sort:
+                    workoutViewModel.invertSorted();
+                    return true;
+            }
+
+            return false;
+        });
 
         WorkoutAdapter workoutAdapter = new WorkoutAdapter();
         //iz workout adaptera pozovi metodu setWorkoutList i prosli parametar koji je zapravo drugi argument funckije observe(workoutList)
