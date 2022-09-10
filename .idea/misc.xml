@@ -11,6 +11,8 @@
         <entry key="..\:/Users/koled/AndroidStudioProjects/RunningApplication/app/src/main/res/drawable/outline_arrow_back_24.xml" value="0.1935" />
         <entry key="..\:/Users/koled/AndroidStudioProjects/RunningApplication/app/src/main/res/drawable/outline_bar_chart_24.xml" value="0.284" />
         <entry key="..\:/Users/koled/AndroidStudioProjects/RunningApplication/app/src/main/res/drawable/outline_calendar_month_24.xml" value="0.306" />
+        <entry key="..\:/Users/koled/AndroidStudioProjects/RunningApplication/app/src/main/res/drawable/outline_create_24.xml" value="0.316" />
+        <entry key="..\:/Users/koled/AndroidStudioProjects/RunningApplication/app/src/main/res/drawable/outline_play_arrow_24.xml" value="0.316" />
         <entry key="..\:/Users/koled/AndroidStudioProjects/RunningApplication/app/src/main/res/drawable/outline_sort_24.xml" value="0.1935" />
         <entry key="..\:/Users/koled/AndroidStudioProjects/RunningApplication/app/src/main/res/layout-land/activity_calories.xml" value="0.23293172690763053" />
         <entry key="..\:/Users/koled/AndroidStudioProjects/RunningApplication/app/src/main/res/layout-land/activity_main.xml" value="0.23293172690763053" />
@@ -29,6 +31,7 @@
         <entry key="..\:/Users/koled/AndroidStudioProjects/RunningApplication/app/src/main/res/layout/view_holder_route.xml" value="0.2296875" />
         <entry key="..\:/Users/koled/AndroidStudioProjects/RunningApplication/app/src/main/res/layout/view_holder_workout.xml" value="0.3614583333333333" />
         <entry key="..\:/Users/koled/AndroidStudioProjects/RunningApplication/app/src/main/res/menu/main_bottom_navigation_menu.xml" value="0.23072916666666668" />
+        <entry key="..\:/Users/koled/AndroidStudioProjects/RunningApplication/app/src/main/res/menu/workout_list_fab_menu.xml" value="0.3625" />
         <entry key="..\:/Users/koled/AndroidStudioProjects/RunningApplication/app/src/main/res/menu/workout_list_options_menu.xml" value="0.18541666666666667" />
         <entry key="..\:/Users/koled/AndroidStudioProjects/RunningApplication/app/src/main/res/menu/workout_options_menu.xml" value="0.18541666666666667" />
         <entry key="..\:/Users/koled/AppData/Local/Android/Sdk/platforms/android-32/data/res/layout/simple_list_item_1.xml" value="0.3625" />

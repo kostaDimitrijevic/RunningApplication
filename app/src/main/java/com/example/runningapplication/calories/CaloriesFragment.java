@@ -1,6 +1,7 @@
 package com.example.runningapplication.calories;
 
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -120,35 +121,43 @@ public class CaloriesFragment extends Fragment {
             } catch (NumberFormatException | ParseException ignored) {
                 //ignore
             }
-
-            // dobijamo handler koji odgovara nasem lloooperu
-            Handler uiThreadHandler = new Handler(Looper.getMainLooper());
-
-            Future<Boolean> future = executorService.submit(() -> {
-                // nesto
-                SystemClock.sleep(1000);
-                uiThreadHandler.post(() -> binding.calculate.setText("okay"));
-                return true;
-            });
-
-            executorService.submit(() -> {
-                try {
-                    // vratice tip Future-a
-                    Boolean retValue = future.get();
-
-                    // toast je deo UI - ne treba da se postavlja kroz neku drugu nit
-                    uiThreadHandler.post(() -> {
-                        Toast.makeText(mainActivity, "finished " + retValue, Toast.LENGTH_SHORT).show();
-                    });
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
         });
 
         return binding.getRoot();
+
+            // dobijamo handler koji odgovara nasem lloooperu
+//            Handler uiThreadHandler = new Handler(Looper.getMainLooper());
+//
+//            Future<Boolean> future = executorService.submit(() -> {
+//                // nesto
+//                SystemClock.sleep(1000);
+//                uiThreadHandler.post(() -> binding.calculate.setBackgroundColor(Color.GREEN));
+//                if(Thread.interrupted()) return false;
+//                SystemClock.sleep(1000);
+//                uiThreadHandler.post(() -> binding.calculate.setText("okay"));
+//                return true;
+//            });
+//
+//            executorService.submit(() -> {
+  //              try {
+                    // true - u toku izvrsavanja
+//                    SystemClock.sleep(1000);
+//                    future.cancel(true);
+                    // vratice tip Future-a
+//                    Boolean retValue = future.get();
+//
+//                    // toast je deo UI - ne treba da se postavlja kroz neku drugu nit
+//                    uiThreadHandler.post(() -> {
+//                        Toast.makeText(mainActivity, "finished " + retValue, Toast.LENGTH_SHORT).show();
+//                    });
+//                } catch (ExecutionException e) {
+//                    e.printStackTrace();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            });
+//        });
+
     }
 
     private Number fetchNumber(TextInputLayout textInputLayout) throws ParseException {

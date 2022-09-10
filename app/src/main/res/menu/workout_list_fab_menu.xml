@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/workout_fab_create"
+        android:title="@string/workout_list_fab_text_create"
+        android:icon="@drawable/outline_create_24"
+        />
+    <item
+        android:id="@+id/workout_fab_start"
+        android:title="@string/workout_list_fab_text_start"
+        android:icon="@drawable/outline_play_arrow_24"
+        />
+
+</menu>
