@@ -12,6 +12,7 @@ import androidx.navigation.Navigation;
 
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,10 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class CaloriesFragment extends Fragment {
 
@@ -35,7 +40,7 @@ public class CaloriesFragment extends Fragment {
     private CaloriesViewModel caloriesViewModel;
     private NavController navController;
     private MainActivity mainActivity;
-    private HandlerThread handlerThread;
+    private ExecutorService executorService;
 
     public CaloriesFragment() {
         // Required empty public constructor
@@ -48,8 +53,7 @@ public class CaloriesFragment extends Fragment {
         mainActivity = (MainActivity) requireActivity();
         caloriesViewModel = new ViewModelProvider(this).get(CaloriesViewModel.class);
 
-        handlerThread = new HandlerThread("handler-thread-name");
-        handlerThread.start();
+       executorService = Executors.newFixedThreadPool(4);
 
     }
 
@@ -118,12 +122,29 @@ public class CaloriesFragment extends Fragment {
             }
 
             // dobijamo handler koji odgovara nasem lloooperu
-            Handler newThreadHandler = new Handler(handlerThread.getLooper());
+            Handler uiThreadHandler = new Handler(Looper.getMainLooper());
 
-            newThreadHandler.post(() -> {
+            Future<Boolean> future = executorService.submit(() -> {
                 // nesto
                 SystemClock.sleep(1000);
-                binding.calculate.post(() -> binding.calculate.setText("okay"));
+                uiThreadHandler.post(() -> binding.calculate.setText("okay"));
+                return true;
+            });
+
+            executorService.submit(() -> {
+                try {
+                    // vratice tip Future-a
+                    Boolean retValue = future.get();
+
+                    // toast je deo UI - ne treba da se postavlja kroz neku drugu nit
+                    uiThreadHandler.post(() -> {
+                        Toast.makeText(mainActivity, "finished " + retValue, Toast.LENGTH_SHORT).show();
+                    });
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             });
         });
 
