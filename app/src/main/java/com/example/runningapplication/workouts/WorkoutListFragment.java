@@ -17,11 +17,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.runningapplication.MainActivity;
+import com.example.runningapplication.R;
 import com.example.runningapplication.data.RunDatabase;
 import com.example.runningapplication.data.WorkoutRepository;
 import com.example.runningapplication.databinding.FragmentWorkoutListBinding;
 
+import dagger.hilt.android.AndroidEntryPoint;
 
+@AndroidEntryPoint
 public class WorkoutListFragment extends Fragment {
 
     private FragmentWorkoutListBinding binding;
@@ -38,17 +41,7 @@ public class WorkoutListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mainActivity = (MainActivity) requireActivity();
 
-        RunDatabase runDatabase = RunDatabase.getInstance(mainActivity);
-        WorkoutRepository workoutRepository = new WorkoutRepository(runDatabase.workoutDao());
-
-        ViewModelProvider.Factory factory = new ViewModelProvider.Factory() {
-            @NonNull
-            @Override
-            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new WorkoutViewModel(workoutRepository);
-            }
-        };
-        workoutViewModel = new ViewModelProvider(mainActivity, factory).get(WorkoutViewModel.class);
+        workoutViewModel = new ViewModelProvider(mainActivity).get(WorkoutViewModel.class);
     }
 
     @Override
@@ -57,6 +50,17 @@ public class WorkoutListFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentWorkoutListBinding.inflate(inflater, container, false);
 
+        binding.toolbar.inflateMenu(R.menu.workout_list_options_menu);
+        binding.toolbar.setOnMenuItemClickListener(menuItem -> {
+            switch (menuItem.getItemId()){
+                case R.id.workout_menu_item_sort:
+                    workoutViewModel.invertSorted();
+                    return true;
+            }
+
+            return false;
+        });
+
         WorkoutAdapter workoutAdapter = new WorkoutAdapter();
         //iz workout adaptera pozovi metodu setWorkoutList i prosli parametar koji je zapravo drugi argument funckije observe(workoutList)
        workoutViewModel.getWorkoutList().observe(getViewLifecycleOwner(), workoutAdapter::setWorkoutList);
@@ -64,9 +68,19 @@ public class WorkoutListFragment extends Fragment {
         binding.recyclerView.setAdapter(workoutAdapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(mainActivity));
 
-        binding.floatingActionButton.setOnClickListener(view -> {
-            NavDirections action = WorkoutListFragmentDirections.createWorkout();
-            navController.navigate(action);
+        binding.floatingActionButton.inflate(R.menu.workout_list_fab_menu);
+
+        binding.floatingActionButton.setOnActionSelectedListener(actionItem -> {
+            switch (actionItem.getId()){
+                case R.id.workout_fab_create:
+                    navController.navigate(WorkoutListFragmentDirections.createWorkout());
+                    return false;
+                case R.id.workout_fab_start:
+                    navController.navigate(WorkoutListFragmentDirections.startWorkout());
+                    return false;
+            }
+
+            return true;
         });
 
         return binding.getRoot();

@@ -5,12 +5,19 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
 
 import com.example.runningapplication.databinding.ActivityMainBinding;
+import com.example.runningapplication.workouts.WorkoutListFragmentDirections;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+
+    public static final String INTENT_ACTION_NOTIFICATION = "com.example.runningapplication.NOTIFICATION";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -19,6 +26,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         if(savedInstanceState == null){
             setupBottomNavigation();
+        }
+
+        if(getIntent().getAction().equals(INTENT_ACTION_NOTIFICATION)){
+            NavController navController = BottomNavigationUtil.changeNavHostFragment(R.id.bottom_navigation_workouts);
+
+            if(navController != null){
+                navController.navigate(WorkoutListFragmentDirections.startWorkout());
+            }
         }
     }
 

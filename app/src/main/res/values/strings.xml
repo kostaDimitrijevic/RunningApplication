@@ -30,20 +30,37 @@
     <string name="calories_toolbar_label">Calories calculator</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="workout_toolbar_label">Workouts</string>
     <string name="main_navigation_label_workouts">Workouts</string>
 
-    <string name="workout_toolbar_create_label">New Workout</string>
-    <string name="workout_create_date">Date</string>
-    <string name="workout_create_label">Label</string>
-    <string name="workout_create_distance">Distance</string>
-    <string name="workout_create_duration">Duration</string>
+    <!-- Workouts -->
+    <string name="workout_toolbar_label">Treninzi</string>
+    <string name="workout_toolbar_create_label">Novi trening</string>
+    <string name="workout_create_date">Datum</string>
+    <string name="workout_create_label">Naziv</string>
+    <string name="workout_create_distance">Distanca</string>
+    <string name="workout_create_duration">Trajanje</string>
     <string name="workout_create_distance_unit">km</string>
     <string name="workout_create_duration_unit">min</string>
-    <string name="workout_create_button_label">Create</string>
-    <string name="workout_create_error_empty">Field is required</string>
-    <string name="workout_create_error_format">Wrong format</string>
-    <string name="workout_options_menu_sort_label">Sort</string>
+    <string name="workout_create_button_label">Napravi</string>
+    <string name="workout_create_error_empty">Obavezno polje</string>
+    <string name="workout_create_error_format">Pogrešan format</string>
+    <string name="workout_options_menu_sort_label">Sortiraj</string>
+    <string name="workout_list_fab_text_start">Započni</string>
+    <string name="workout_list_fab_text_create">Napravi</string>
+    <string name="workout_start_button_text_start">Započni</string>
+    <string name="workout_start_button_text_finish">Završi</string>
+    <string name="workout_start_button_text_cancel">Odustani</string>
+    <string name="workout_start_button_text_power">Power</string>
+    <string-array name="workout_toast_motivation">
+        <item>Trči više! :)</item>
+        <item>Trči brže! :)</item>
+    </string-array>
+    <string name="workout_notification_channel_name">Pratilac treninga</string>
+    <string name="workout_notification_content_title">Workout</string>
+    <string name="workout_notification_content_text">
+        Aplikacija za trčanje prati vaš trening.
+    </string>
+    <string name="workout_label">Trening</string>
 
 
 </resources>

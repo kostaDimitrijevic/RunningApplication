@@ -23,7 +23,7 @@ public abstract class RunDatabase extends RoomDatabase {
         if(instance == null) {
             synchronized (RunDatabase.class){
                 if(instance == null){
-                    instance = Room.databaseBuilder(context.getApplicationContext(), RunDatabase.class, DATABASE_NAME).allowMainThreadQueries().build();
+                    instance = Room.databaseBuilder(context.getApplicationContext(), RunDatabase.class, DATABASE_NAME).build();
                 }
             }
 

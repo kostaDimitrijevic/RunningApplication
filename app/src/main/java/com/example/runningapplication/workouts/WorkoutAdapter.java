@@ -62,7 +62,7 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
             binding.workoutLabel.setText(workout.getLabel());
             binding.workoutDistance.setText(String.format("%.2f km", workout.getDistance()));
             binding.workoutPace.setText(String.format("%s min/km", DateTimeUtil.realMinutesToString(workout.getDuration() / workout.getDistance())));
-            binding.workoutDuration.setText(String.format("%.2f min", workout.getDistance()));
+            binding.workoutDuration.setText(String.format("%s min", DateTimeUtil.realMinutesToString(workout.getDuration())));
         }
     }
 }

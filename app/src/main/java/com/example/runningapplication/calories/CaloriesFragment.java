@@ -1,6 +1,7 @@
 package com.example.runningapplication.calories;
 
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +25,15 @@ import com.example.runningapplication.MainActivity;
 import com.example.runningapplication.R;
 
 import com.example.runningapplication.databinding.FragmentCaloriesBinding;
+import com.example.runningapplication.threading.CustomLooperThread;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class CaloriesFragment extends Fragment {
 
@@ -31,6 +41,7 @@ public class CaloriesFragment extends Fragment {
     private CaloriesViewModel caloriesViewModel;
     private NavController navController;
     private MainActivity mainActivity;
+    private ExecutorService executorService;
 
     public CaloriesFragment() {
         // Required empty public constructor
@@ -42,6 +53,8 @@ public class CaloriesFragment extends Fragment {
 
         mainActivity = (MainActivity) requireActivity();
         caloriesViewModel = new ViewModelProvider(this).get(CaloriesViewModel.class);
+
+       executorService = Executors.newFixedThreadPool(4);
 
     }
 
@@ -107,11 +120,44 @@ public class CaloriesFragment extends Fragment {
                 caloriesViewModel.updateValues(weight, height, age, isMale, duration, met);
             } catch (NumberFormatException | ParseException ignored) {
                 //ignore
-                return;
             }
         });
 
         return binding.getRoot();
+
+            // dobijamo handler koji odgovara nasem lloooperu
+//            Handler uiThreadHandler = new Handler(Looper.getMainLooper());
+//
+//            Future<Boolean> future = executorService.submit(() -> {
+//                // nesto
+//                SystemClock.sleep(1000);
+//                uiThreadHandler.post(() -> binding.calculate.setBackgroundColor(Color.GREEN));
+//                if(Thread.interrupted()) return false;
+//                SystemClock.sleep(1000);
+//                uiThreadHandler.post(() -> binding.calculate.setText("okay"));
+//                return true;
+//            });
+//
+//            executorService.submit(() -> {
+  //              try {
+                    // true - u toku izvrsavanja
+//                    SystemClock.sleep(1000);
+//                    future.cancel(true);
+                    // vratice tip Future-a
+//                    Boolean retValue = future.get();
+//
+//                    // toast je deo UI - ne treba da se postavlja kroz neku drugu nit
+//                    uiThreadHandler.post(() -> {
+//                        Toast.makeText(mainActivity, "finished " + retValue, Toast.LENGTH_SHORT).show();
+//                    });
+//                } catch (ExecutionException e) {
+//                    e.printStackTrace();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            });
+//        });
+
     }
 
     private Number fetchNumber(TextInputLayout textInputLayout) throws ParseException {
