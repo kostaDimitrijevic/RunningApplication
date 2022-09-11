@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -14,6 +15,7 @@ import androidx.core.app.NotificationChannelCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleService;
 
 import com.example.runningapplication.MainActivity;
 import com.example.runningapplication.R;
@@ -22,91 +24,75 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class WorkoutService extends Service {
+import javax.inject.Inject;
 
-    private final Timer timer = new Timer();
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
+public class WorkoutService extends LifecycleService {
+
     private boolean serviceStarted = false;
 
     private static final String NOTIFICATION_CHANNEL_ID = "workout-notification-channel";
     private static final int NOTIFICATION_ID = 1;
 
-    private final AtomicReference<String> motivationMessage = new AtomicReference<>(null);
-    private int motivationMessageIndex = 1;
 
     public static final String INTENT_ACTION_START = "com.example.runningapplication.workouts.START";
     public static final String INTENT_ACTION_POWER = "com.example.runningapplication.workouts.POWER";
 
+    @Inject
+    public LifecycleAwareMotivator motivator;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        getLifecycle().addObserver(motivator);
     }
 
     // poziva se svaki put kada se pokrene servis
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        super.onStartCommand(intent, flags, startId);
         createNotificationChannel();
         // id notifikacije i sama notifikacija koju vidi korisnik
         startForeground(NOTIFICATION_ID, getNotification());
 
-        switch (intent.getAction()){
+        switch (intent.getAction()) {
             case INTENT_ACTION_START:
-                if(!serviceStarted){
-                    scheduleTimer();
+                if (!serviceStarted) {
+                    serviceStarted = true;
+                    motivator.start(this);
                 }
                 break;
             case INTENT_ACTION_POWER:
-                if(serviceStarted){
-                    changeMotivationMessage();
+                if (serviceStarted) {
+                    motivator.changeMessage(this);
                 }
                 break;
         }
 
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
+    }
+
+    // nema veze sa medju procesnom komunikacijom
+    public class PrimitiveBinder extends Binder{
+        public WorkoutService getService(){
+            return WorkoutService.this;
+        }
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        super.onBind(intent);
+        return new PrimitiveBinder();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        timer.cancel();
-    }
-
-    private void scheduleTimer(){
-        if(motivationMessage.get() == null){
-            String[] motivationMessages = getResources().getStringArray(R.array.workout_toast_motivation);
-            motivationMessage.set(motivationMessages[0]);
-        }
-
-        Handler handler = new Handler(Looper.getMainLooper());
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                handler.post(() -> {
-                    Toast.makeText(WorkoutService.this, motivationMessage.get(), Toast.LENGTH_SHORT).show();
-                });
-            }
-        }, 0, 7000);
-
-        serviceStarted = true;
-    }
-
-    private void changeMotivationMessage(){
-        String[] motivationMessages = getResources().getStringArray(R.array.workout_toast_motivation);
-        motivationMessage.set(motivationMessages[motivationMessageIndex]);
-        motivationMessageIndex = (motivationMessageIndex + 1) % motivationMessages.length;
-
-        Toast.makeText(
-          this,
-          "changeMotivationMessage()",
-          Toast.LENGTH_SHORT
-        ).show();
     }
 
     private void createNotificationChannel() {
