@@ -1,13 +1,18 @@
 package com.example.runningapplication.workouts;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -18,7 +23,6 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.runningapplication.MainActivity;
 import com.example.runningapplication.R;
@@ -28,7 +32,6 @@ import com.example.runningapplication.databinding.FragmentWorkoutStartBinding;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicReference;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -45,6 +48,16 @@ public class WorkoutStartFragment extends Fragment {
 
     private Timer timer;
     private SharedPreferences sharedPreferences;
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.RequestPermission(),
+                    isPermissionGranted -> {
+                        if(isPermissionGranted){
+                            startWorkout(new Date().getTime());
+                        }
+                    }
+            );
 
     public WorkoutStartFragment() {
         // Required empty public constructor
@@ -75,7 +88,12 @@ public class WorkoutStartFragment extends Fragment {
         }
 
         binding.start.setOnClickListener(view -> {
-            startWorkout(new Date().getTime());
+            if(ActivityCompat.checkSelfPermission(mainActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+            }
+            else{
+                startWorkout(new Date().getTime());
+            }
         });
 
         binding.cancel.setOnClickListener(view -> {
