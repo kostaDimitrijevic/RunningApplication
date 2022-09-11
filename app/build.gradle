@@ -61,5 +61,6 @@ dependencies {
     annotationProcessor 'com.google.dagger:hilt-compiler:2.43.2'
 
     implementation "com.leinardi.android:speed-dial:3.3.0"
+    implementation 'androidx.core:core:1.8.0'
 
 }

@@ -156,6 +156,9 @@ public class WorkoutStartFragment extends Fragment {
 
     private void stopWorkout(){
         sharedPreferences.edit().remove(START_TIMESTAMP_KEY).commit();
+        Intent intent = new Intent();
+        intent.setClass(mainActivity, WorkoutService.class);
+        mainActivity.stopService(intent);
         navController.navigateUp();
     }
 
