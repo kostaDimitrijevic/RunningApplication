@@ -43,11 +43,23 @@ public class WorkoutService extends LifecycleService {
     @Inject
     public LifecycleAwareMotivator motivator;
 
+    @Inject
+    public LifecycleAwarePlayer player;
+
+    @Inject
+    public LifecycleAwareMeasurer measurer;
+
+    @Inject
+    public LifecycleAwareLocator locator;
+
     @Override
     public void onCreate() {
         super.onCreate();
 
         getLifecycle().addObserver(motivator);
+        getLifecycle().addObserver(player);
+        getLifecycle().addObserver(measurer);
+        getLifecycle().addObserver(locator);
     }
 
     // poziva se svaki put kada se pokrene servis
@@ -64,6 +76,9 @@ public class WorkoutService extends LifecycleService {
                 if (!serviceStarted) {
                     serviceStarted = true;
                     motivator.start(this);
+                    player.start(this);
+                    measurer.start(this);
+                    locator.getLocation(this);
                 }
                 break;
             case INTENT_ACTION_POWER:
@@ -98,7 +113,7 @@ public class WorkoutService extends LifecycleService {
     private void createNotificationChannel() {
 
         NotificationChannelCompat notificationChannel = new NotificationChannelCompat
-                .Builder(NOTIFICATION_CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_DEFAULT)
+                .Builder(NOTIFICATION_CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_LOW)
                 .setName(getString(R.string.workout_notification_channel_name))
                 .build();
 

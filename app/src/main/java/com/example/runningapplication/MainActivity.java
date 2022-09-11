@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
     public static final String INTENT_ACTION_NOTIFICATION = "com.example.runningapplication.NOTIFICATION";
+    public static final String LOG_TAG = "log-tag";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
