@@ -28,6 +28,7 @@ import com.example.runningapplication.databinding.FragmentWorkoutStartBinding;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicReference;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -83,6 +84,13 @@ public class WorkoutStartFragment extends Fragment {
 
         binding.finish.setOnClickListener(view -> {
             finishWorkout();
+        });
+
+        binding.power.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setClass(mainActivity, WorkoutService.class);
+            intent.setAction(WorkoutService.INTENT_ACTION_POWER);
+            mainActivity.startService(intent);
         });
 
         // ako se doda lifecyclerOwner onda ce nas dispatcher da vodi racuna da li je taj callback enable-ovan
@@ -141,6 +149,7 @@ public class WorkoutStartFragment extends Fragment {
 
         Intent intent = new Intent();
         intent.setClass(mainActivity, WorkoutService.class);
+        intent.setAction(WorkoutService.INTENT_ACTION_START);
         mainActivity.startService(intent);
 
         // nije dobar nacin jer ce aplikacija otici u background
