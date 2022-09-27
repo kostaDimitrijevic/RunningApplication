@@ -5,12 +5,14 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationChannelCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -120,14 +122,14 @@ public class WorkoutService extends LifecycleService {
         NotificationManagerCompat.from(this).createNotificationChannel(notificationChannel);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private Notification getNotification(){
 
         Intent intent = new Intent();
         intent.setClass(this, MainActivity.class);
         intent.setAction(MainActivity.INTENT_ACTION_NOTIFICATION);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         return new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.baseline_directions_run_black_24)

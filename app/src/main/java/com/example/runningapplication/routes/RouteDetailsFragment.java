@@ -41,6 +41,7 @@ public class RouteDetailsFragment extends Fragment {
 
         binding = FragmentRouteDetailsBinding.inflate(inflater, container, false);
 
+        //Ovo je preko safe args koji se prosledjuju preko navigacije
         Route selectedRoute = routeViewModel.getRoutes().get(RouteDetailsFragmentArgs.fromBundle(requireArguments()).getRouteIndex());
 
         // prosledjujemo lifecycleowner(this fragment) za koji zelimo da posmatra selekciju rute

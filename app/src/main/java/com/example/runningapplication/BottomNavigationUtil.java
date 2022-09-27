@@ -137,7 +137,7 @@ public class BottomNavigationUtil {
             fragmentTransaction.setPrimaryNavigationFragment(navHostFragment);
         }
 
-        fragmentTransaction.commitNow();;
+        fragmentTransaction.commitNow();
     }
 
     private static void detachNavHostFragment(FragmentManager fragmentManager, NavHostFragment navHostFragment){
